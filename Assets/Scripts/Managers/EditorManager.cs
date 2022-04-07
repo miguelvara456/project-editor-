@@ -8,12 +8,16 @@ public class EditorManager : MonoBehaviour
     [SerializeField] private LayerMask layerForRaycastMouse;
     [SerializeField] private GameObject[] transformAxiesPrefabs;
     [SerializeField] private List<BehaviourObjects> objectsSelecteds;
+    [SerializeField] private BehaviourObjects[] objectsToCreates;
     private CameraController cameraController;
     private GameObject[] axiesTransforms;
-    
+    private bool isInteractiveInWorldSpace;
+    private UIManager uiManager;
+
 
     private void Awake()
     {
+        uiManager = GetComponent<UIManager>();
         cameraController = Camera.main.GetComponent<CameraController>();
     }
 
@@ -27,15 +31,15 @@ public class EditorManager : MonoBehaviour
     {
         CreateAxiesTransforms();
         RemoveDeselectedObject();
+        ActiveInteractiveInWorldSpace();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
+        if (Input.GetKeyDown(KeyCode.Mouse0) && isInteractiveInWorldSpace)
             SelectFromRaycast();
-        }
+        
     }
 
     private void SelectFromRaycast()
@@ -73,6 +77,8 @@ public class EditorManager : MonoBehaviour
         var axieTransforms = axiesTransforms[0];
         axieTransforms.SetActive(true);
         axieTransforms.transform.position = objectDrag.transform.position;
+        uiManager.ActivePanel(Panels.atributes);
+        uiManager.SetAttributeObject(objectDrag);
     }
 
     private void RemoveDeselectedObject()
@@ -87,6 +93,7 @@ public class EditorManager : MonoBehaviour
         var axieTransforms = axiesTransforms[0];
         axieTransforms.SetActive(false);
         print($"Remove all objects in to the list ");
+        uiManager.ActivePanel(Panels.creations);
     }
 
     private void CreateAxiesTransforms()
@@ -97,5 +104,33 @@ public class EditorManager : MonoBehaviour
             axiesTransforms[i] = Instantiate(transformAxiesPrefabs[i]);
             axiesTransforms[i].SetActive(false);
         }
+    }
+
+    public void CreateObject(string objectToCreate)
+    {
+        foreach (var objects in objectsToCreates)
+        {
+            if (objects.ObjectName == objectToCreate)
+            {
+                var newObj = Instantiate(objects, Vector3.zero, Quaternion.identity);
+                RemoveDeselectedObject();
+                AddObjectSelected(newObj);
+                
+            }
+        }
+    }
+
+    public void CreateGrid()
+    {
+        
+    }
+
+    public void ActiveInteractiveInWorldSpace()
+    {
+        isInteractiveInWorldSpace = true;
+    }
+    public void DisactiveInteractiveInWorldSpace()
+    {
+        isInteractiveInWorldSpace = false;
     }
 }

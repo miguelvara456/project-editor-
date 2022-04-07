@@ -18,8 +18,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float sensivility;
     [SerializeField] private Transform posCentral;
     [SerializeField] private float maxX,minX,maxY,minY;
-    public Transform target;
-    public Vector3 targetOffset;
     public float distance = 5.0f;
     public float maxDistance = 20;
     public float minDistance = .6f;
@@ -47,14 +45,7 @@ public class CameraController : MonoBehaviour
     {
         ResetPosition();
         //If there is no target, create a temporary target at 'distance' from the cameras current viewpoint
-        if (!target)
-        {
-            GameObject go = new GameObject("Cam Target");
-            go.transform.position = transform.position + (transform.forward * distance);
-            target = go.transform;
-        }
 
-        distance = Vector3.Distance(transform.position, target.position);
         currentDistance = distance;
         desiredDistance = distance;
 
@@ -68,28 +59,7 @@ public class CameraController : MonoBehaviour
     }
 
    
-    //void LateUpdate()
-    //{
-    //    // If Control and Alt and Middle button? ZOOM!
 
-    //    // If middle mouse and left alt are selected? ORBIT
-
-    //    // otherwise if middle mouse is selected, we pan by way of transforming the target in screenspace
-        
-
-    //    ////////Orbit Position
-
-    //    // affect the desired Zoom distance if we roll the scrollwheel
-    //    //desiredDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs(desiredDistance);
-    //    //clamp the zoom min/max
-    //    //desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
-    //    // For smoothing of the zoom, lerp distance
-       
-
-    //    // calculate position based on the new currentDistance 
-    //    //position = target.position - (rotation * Vector3.forward * currentDistance + targetOffset);
-    //    //transform.position = position;
-    //}
 
 
     void LateUpdate()
@@ -112,7 +82,7 @@ public class CameraController : MonoBehaviour
             
         if(Input.GetKey(moverFast))
         {
-            timeFast += Time.deltaTime;
+            timeFast += 0.5f*Time.deltaTime;
             vel += timeFast; 
         }
         else
@@ -120,15 +90,8 @@ public class CameraController : MonoBehaviour
             timeFast = 0;
             vel = velInitial;
         }
-
-       
-
-
-        if (Input.GetMouseButton(2))
-        {
-            OrbitCamera();
-        }
-        else if(Input.GetKey(KeyCode.LeftControl))
+        
+        if(Input.GetKey(KeyCode.LeftControl))
         {
             ZoomCamera();
         }
@@ -148,19 +111,7 @@ public class CameraController : MonoBehaviour
         currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
         desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
     }
-
-     void OrbitCamera()
-    {
-        
-            //grab the rotation of the camera so we can move in a psuedo local XY space
-            target.rotation = transform.rotation;
-            target.Translate(Vector3.right * -Input.GetAxis("Mouse X") * panSpeed);
-            target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, Space.World);
-
-        // calculate position based on the new currentDistance 
-        position = target.position - (rotation * Vector3.forward * currentDistance + targetOffset);
-        transform.position = position;
-    }
+     
 
      void Rotate()
     {

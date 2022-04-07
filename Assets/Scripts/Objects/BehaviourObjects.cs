@@ -2,8 +2,10 @@
 using UnityEngine;
 public class BehaviourObjects : MonoBehaviour,IDraggreable,IRotate,IScale,ITranslate
 {
-    private bool isdrag;
+    [SerializeField] private bool isdrag;
+    [SerializeField] private string objectName;
     private Collider col;
+    public string ObjectName => objectName;
     public bool IsDrag => isdrag;
 
     private void Awake()
@@ -37,5 +39,10 @@ public class BehaviourObjects : MonoBehaviour,IDraggreable,IRotate,IScale,ITrans
     public Vector3 translate()
     {
         throw new System.NotImplementedException();
+    }
+
+    public void SetObjectName(string newName)
+    {
+        objectName = newName;
     }
 }

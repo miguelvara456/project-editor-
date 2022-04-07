@@ -17,12 +17,18 @@ public class AxiesTransformsAnimation : MonoBehaviour
 
     private void OnDisable()
     {
-        isEnabled = false;
-        transform.localScale = Vector3.zero;
+        ResetAnimation();
     }
     private void Awake()
     {
         cam = Camera.main.transform;
+        ResetAnimation();
+    }
+
+    private void ResetAnimation()
+    {
+        isEnabled = false;
+        transform.localScale = Vector3.zero;
     }
 
     private void CalculateCurrentScale()
@@ -32,8 +38,11 @@ public class AxiesTransformsAnimation : MonoBehaviour
     }
     void Update()
     {
-        if(isEnabled)
-        CalculateCurrentScale();
+        if (isEnabled)
+        {
+            CalculateCurrentScale();
+            transform.localScale = currentScale;
+        }
     }
 
 }
